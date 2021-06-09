@@ -158,10 +158,11 @@ function getProfilesOptions() {
                 var sound      = document.createElement('audio');
                 sound.id       = 'audio-player';
                 sound.controls = 'controls';
-                sound.preload  = 'audio';
                 sound.src      = url;
+                sound.style    = "width:35em";
                 sound.type     = 'audio/ogg';
                 document.getElementById('audio_container').appendChild(sound);
+                sound.load()
             }) 
             
             document.getElementById('audio_container').appendChild(audio_container_div);
