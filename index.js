@@ -42,6 +42,7 @@ async function get_downl(audio_name){
 
 
 function getProfilesOptions() {
+    var sound = document.createElement('audio');
     return new Promise(resolve => {
         firebase.firestore().collection("sounds_db").get().then(snapshot => { // Database is stored in a collection
             //from here we retrieve the data and randombly retrieve one of the elements.
@@ -139,6 +140,7 @@ function getProfilesOptions() {
                     sound.controls = 'controls';
                     sound.src      = value;
                     sound.type     = 'audio/ogg';
+                    sound.style    = "width:35em";
                     document.getElementById('audio_container').appendChild(sound);
                 });
             });
@@ -155,21 +157,22 @@ function getProfilesOptions() {
             audio_container_div.appendChild(para_title)
             soundRef.getDownloadURL()
             .then(function (url){
-                var sound      = document.createElement('audio');
                 sound.id       = 'audio-player';
                 sound.controls = 'controls';
                 sound.src      = url;
                 sound.style    = "width:35em";
                 sound.type     = 'audio/ogg';
                 document.getElementById('audio_container').appendChild(sound);
-                sound.load()
             }) 
             
             document.getElementById('audio_container').appendChild(audio_container_div);
         }
                
-       })                                                          
-    })  
+    })
+    sound.load()
+                                                      
+    }) 
+
  }
  getProfilesOptions()
 
