@@ -139,8 +139,8 @@ function getProfilesOptions() {
                     sound.id       = 'audio-player';
                     sound.controls = 'controls';
                     sound.src      = value;
-                    sound.type     = 'audio/ogg';
                     sound.style    = "width:35em";
+                    sound.type     = 'audio/ogg';
                     document.getElementById('audio_container').appendChild(sound);
                 });
             });
