@@ -141,6 +141,7 @@ function getProfilesOptions() {
                     sound.src      = value;
                     sound.style    = "width:35em";
                     sound.type     = 'audio/ogg';
+                    sound.preload  = 'metadata';
                     document.getElementById('audio_container').appendChild(sound);
                 });
             });
@@ -162,6 +163,7 @@ function getProfilesOptions() {
                 sound.src      = url;
                 sound.style    = "width:35em";
                 sound.type     = 'audio/ogg';
+                sound.preload  = 'metadata';
                 document.getElementById('audio_container').appendChild(sound);
             }) 
             
