@@ -102,7 +102,6 @@ function getProfilesOptions() {
 
                 para_title.textContent += title;
             }
-            //TODO: NO estan ordenats!
             promises_audio = []
             audios_names.forEach(function (value, i){
                 audio_name = clean_name.replace(/ /g, '_')+(i+1)
@@ -149,7 +148,7 @@ function getProfilesOptions() {
         }
         else {
             audio_name = randomSound.name.replace(/_/g,' ')
-            var soundRef = firebase.storage().ref("sounds/"+randomSound.name+'.ogg') //Then we search the audio in the storage by name, ie, each name musct be unique.
+            var soundRef = firebase.storage().ref("sounds/"+randomSound.name+'.mp3') //Then we search the audio in the storage by name, ie, each name musct be unique.
             var title = document.createTextNode(capitalize_Words(randomSound.name.replace(/_/g,' ')))
             para_title = document.getElementById('name');
             para_title.appendChild(title)
@@ -162,7 +161,7 @@ function getProfilesOptions() {
                 sound.controls = 'controls';
                 sound.src      = url;
                 sound.style    = "width:35em";
-                sound.type     = 'audio/ogg';
+                sound.type     = 'audio/mpeg';
                 sound.preload  = 'none';
                 document.getElementById('audio_container').appendChild(sound);
             }) 
