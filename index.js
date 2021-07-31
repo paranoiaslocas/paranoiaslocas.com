@@ -262,7 +262,26 @@ function getProfilesOptions() {
  }
  getProfilesOptions()
 
+ function isiOS() {
+    return [
+          'iPad Simulator',
+          'iPhone Simulator',
+          'iPod Simulator',
+          'iPad',
+          'iPhone',
+          'iPod'
+        ].includes(navigator.platform)
+        // iPad on iOS 13 detection
+        || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+  }
 
+  if (isiOS()) {
+    // iOS does not support "canplay" event
+    this.player.addEventListener('loadedmetadata', this.hideLoadingIndicator.bind(self)); // iOS does not let "volume" property to be set programmatically
+
+    this.audioPlayer.querySelector('.volume').style.display = 'none';
+    this.audioPlayer.querySelector('.controls').style.marginRight = '0';
+  }
 
 // 2. fer la logica per triar basada en el ranking i si hi ha mes dun. Si nhi ha mes dun posar mes tags daudio. 
 
