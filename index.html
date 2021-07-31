@@ -3,8 +3,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="green-audio-player-master/dist/css/green-audio-player.min.css">
-        <script type="module" src="green-audio-player-master/dist/js/green-audio-player.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/greghub/green-audio-player/dist/css/green-audio-player.min.css">
+        <script src="https://cdn.jsdelivr.net/gh/greghub/green-audio-player/dist/js/green-audio-player.min.js"></script>
 
         <link rel="stylesheet" href="index.css">
         <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-app.js"></script>
@@ -20,6 +20,25 @@
         <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-firestore.js"></script>  
         <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
         
+        <script>
+            import GreenAudioPlayer from "green-audio-player/dist/js/green-audio-player";
+
+            class GreenAudioPlayerFix extends GreenAudioPlayer {
+            constructor(player, options) {
+                super(player, options);
+                delete this.isDevice;
+                this.isDevice =
+                (/ipad|iphone|ipod|android/i.test(
+                    window.navigator.userAgent.toLowerCase()
+                ) ||
+                    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) &&
+                !window.MSStream;
+                this.overcomeIosLimitations();
+            }
+            }
+
+            export default GreenAudioPlayerFix;
+        </script>
     </head>
     <body>
 

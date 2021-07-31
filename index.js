@@ -14,23 +14,7 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
 // ------------------------------------------------------------------------------------------------------
-import GreenAudioPlayer from "green-audio-player/dist/js/green-audio-player.min.js";
 
-class GreenAudioPlayerFix extends GreenAudioPlayer {
-constructor(player, options) {
-    super(player, options);
-    delete this.isDevice;
-    this.isDevice =
-    (/ipad|iphone|ipod|android/i.test(
-        window.navigator.userAgent.toLowerCase()
-    ) ||
-        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) &&
-    !window.MSStream;
-    this.overcomeIosLimitations();
-}
-}
-
-export default GreenAudioPlayerFix;
 
 function read_and_print_list() {
     // Create a reference under which you want to list
