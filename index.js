@@ -228,29 +228,32 @@ function getProfilesOptions() {
             audio_container_div.appendChild(para_title)
             soundRef.getDownloadURL()
             .then(function (url){
-                // sound.id       = 'audio-player';
-                // sound.controls = 'controls';
-                // sound.src      = url;
-                // sound.style    = "width:35em";
-                // sound.type     = 'audio/mpeg';
-                // sound.preload  = 'none';
-                // document.getElementById('audio_container').appendChild(sound);
-                var div_gap = document.createElement('div');
-                div_gap.className = "gap-example";
-                var source = document.createElement('source');
-                var sound      = document.createElement('audio');
-                source.type= 'audio/ogg';
-                source.src= url;
-                sound.appendChild(source)
-                div_gap.appendChild(sound);
-                document.getElementById('audio_container').appendChild(div_gap);
+                sound.id       = 'audio-player';
+                sound.controls = 'controls';
+                sound.src      = url;
+                sound.style    = "width:35em";
+                sound.type     = 'audio/mpeg';
+                sound.preload  = 'none';
+                document.getElementById('audio_container').appendChild(sound);
+            //     var div_gap = document.createElement('div');
+            //     div_gap.className = "gap-example";
+            //     var source = document.createElement('source');
+            //     var sound      = document.createElement('audio');
+            //     source.type= 'audio/ogg';
+            //     source.src= url;
+            //     sound.appendChild(source)
+            //     div_gap.appendChild(sound);
+            //     document.getElementById('audio_container').appendChild(div_gap);
 
-                GreenAudioPlayer.init({
-                    selector: '.gap-example', // inits Green Audio Player on each audio container that has class "player"
-                    stopOthersOnPlay: true
-                });
+            //     GreenAudioPlayer.init({
+            //         selector: '.gap-example', // inits Green Audio Player on each audio container that has class "player"
+            //         stopOthersOnPlay: true
+            //     });
+            // }) 
+            // document.getElementById('audio_container').appendChild(audio_container_div);
             }) 
             document.getElementById('audio_container').appendChild(audio_container_div);
+
 
         }
                
