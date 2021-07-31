@@ -29,10 +29,23 @@ section > canvas {
 }
 
 /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
-@media screen and (max-height: 450px) {
+/* @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
+  .sidenav {width: 100%;}
+
+} */
+
+@viewport {
+  width: device-width ;
+  zoom: 1.0 ;
 }
+@-ms-viewport {
+  width: device-width ;
+}
+
+
+
 #sub_name {
   text-align: center;
   font-family: 'Oswald', Helvetica, sans-serif;
@@ -54,11 +67,8 @@ section > canvas {
 }
 
 .green-audio-player {
-  width: 600px;
-  height: 90px;
+  width: 15em;
+  height: 6em;
   margin: 1em;
 
 }
-/* h1 {
-  
-} */
