@@ -14,7 +14,23 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
 // ------------------------------------------------------------------------------------------------------
+import GreenAudioPlayer from "green-audio-player/dist/js/green-audio-player.min.js";
 
+class GreenAudioPlayerFix extends GreenAudioPlayer {
+constructor(player, options) {
+    super(player, options);
+    delete this.isDevice;
+    this.isDevice =
+    (/ipad|iphone|ipod|android/i.test(
+        window.navigator.userAgent.toLowerCase()
+    ) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) &&
+    !window.MSStream;
+    this.overcomeIosLimitations();
+}
+}
+
+export default GreenAudioPlayerFix;
 
 function read_and_print_list() {
     // Create a reference under which you want to list
@@ -262,26 +278,7 @@ function getProfilesOptions() {
  }
  getProfilesOptions()
 
- function isiOS() {
-    return [
-          'iPad Simulator',
-          'iPhone Simulator',
-          'iPod Simulator',
-          'iPad',
-          'iPhone',
-          'iPod'
-        ].includes(navigator.platform)
-        // iPad on iOS 13 detection
-        || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
-  }
 
-  if (isiOS()) {
-    // iOS does not support "canplay" event
-    this.player.addEventListener('loadedmetadata', this.hideLoadingIndicator.bind(self)); // iOS does not let "volume" property to be set programmatically
-
-    this.audioPlayer.querySelector('.volume').style.display = 'none';
-    this.audioPlayer.querySelector('.controls').style.marginRight = '0';
-  }
 
 // 2. fer la logica per triar basada en el ranking i si hi ha mes dun. Si nhi ha mes dun posar mes tags daudio. 
 
