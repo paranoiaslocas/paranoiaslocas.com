@@ -1,10 +1,16 @@
+<meta charset="utf-8">
+
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/greghub/green-audio-player/dist/css/green-audio-player.min.css">
+        <script src="https://cdn.jsdelivr.net/gh/greghub/green-audio-player/dist/js/green-audio-player.min.js"></script>
+
         <link rel="stylesheet" href="index.css">
         <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-app.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/party-js@latest/bundle/party.min.js"></script>
         <script src="confetti-js-master/dist/index.min.js"></script>
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 
         <!-- TODO: Add SDKs for Firebase products that you want to use
@@ -12,19 +18,48 @@
         <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-analytics.js"></script>
         <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-storage.js"></script>
         <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-firestore.js"></script>  
-        <script src="index.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+
     </head>
-    
     <body>
-    <section>
-    <div class="content">
-        <h1>paranoiaslocas.com</h1>
-        <h4 id='name'></h4>
-        <div id="audio_container">
+
+        <!-- Side navigation -->
+        <!-- <div class="sidenav" id="sidenav"> -->
+        <div class="w3-sidebar w3-bar-block w3-border-right" style="display: none;" id="sidenav">
+        <button class="w3-bar-item w3-button w3-xlarge w3-blue-gray w3-center"
+            onclick="w3_close()" id = "close_sidebar">&times; tancar pestanya &times;</button>
+
         </div>
-    </div>
+
+        <div class="w3-blue-gray">
+            
+            <div class="w3-container ">
+                <button id="openNav" class="w3-button w3-xlarge w3-blue-gray w3-hover-deep-orange" onclick="w3_open()">&#9776;</button>
+            </div>
+        </div>
+        
+
+
+        <div id="main">
+            
+            <section>
+                <div class="content">
+                    <h1>paranoiaslocas.com</h1>
+                    <h1 id='sub_name'></h1>
+                    <h2 id='name'></h2>
+                    <!-- <div id="audio_container"> -->
+                    <div id = "audio_container">
+ 
+                    </div>
+                    </div>
+                </div>
+                
+            </section>
+        </div>
     </body>
-    <canvas id="my-canvas"></canvas>
-</section>
+
+
+<script src="index.js"></script>
+<script src="sidebar.js"></script>
 
 </html>

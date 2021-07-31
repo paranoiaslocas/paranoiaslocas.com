@@ -15,6 +15,66 @@ firebase.analytics();
 
 // ------------------------------------------------------------------------------------------------------
 
+
+function read_and_print_list() {
+    // Create a reference under which you want to list
+    var storageRef = firebase.storage().ref('sounds');
+    // Now we get the references of these images
+    var signout_button = document.createElement("a");
+    signout_button.innerHTML = '<b>Tancar sessió</b>';
+    document.getElementById("sidenav").appendChild(signout_button);
+
+    signout_button.classList.add("w3-bar-item");
+    signout_button.classList.add("w3-button");
+    signout_button.classList.add("w3-red");
+    signout_button.classList.add("w3-border");
+    signout_button.classList.add("w3-center");
+    signout_button.classList.add("w3-hover-pale-red");
+
+
+    for (let i = 0; i < 3; i++) {
+        var space_ = document.createElement("a");
+
+        document.getElementById("sidenav").appendChild(space_);
+    
+        space_.classList.add("w3-bar-item");
+        space_.classList.add("w3-button");
+        space_.classList.add("w3-white");
+        space_.classList.add("w3-hover-white");
+    
+    }
+
+    var list_ = document.createElement("a");
+    list_.innerHTML = '<b>Llista - audios</b>';
+    document.getElementById("sidenav").appendChild(list_);
+
+    list_.classList.add("w3-bar-item");
+    list_.classList.add("w3-button");
+    list_.classList.add("w3-white");
+    list_.classList.add("w3-hover-white");
+    list_.classList.add("w3-center");
+
+    storageRef.listAll().then(function(result) {
+        result.items.forEach(function(imageRef) {
+            // And finally display them
+            var node = document.createElement("a");
+            var filename = (imageRef._delegate._location.path_).split('sounds/')[1];
+            node.innerHTML = filename;
+            // var textnode = document.createTextNode(filename);
+            // node.appendChild(textnode);
+            node.classList.add("w3-bar-item");
+            node.classList.add("w3-button");
+            node.classList.add("w3-light-gray");
+            node.classList.add("w3-border");
+            document.getElementById("sidenav").appendChild(node);
+        });
+
+    }).catch(function(error) {
+        // Handle any errors
+    });
+}
+read_and_print_list();
+
 function capitalize_Words(str)
 {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
@@ -40,7 +100,6 @@ async function get_downl(audio_name){
     }
 };
 
-
 function getProfilesOptions() {
     var sound = document.createElement('audio');
     return new Promise(resolve => {
@@ -55,11 +114,44 @@ function getProfilesOptions() {
         
         // ADD GOOD QUALITY CONTENT EFFECTS
         
-        if (randomSound.ranking == 5) {
-            
-            var confettiSettings = { target: 'my-canvas' };
-            var confetti = new ConfettiGenerator(confettiSettings);
-            confetti.render();
+        if (randomSound.ranking >= 5) {
+            var end = Date.now() + (15 * 1000);
+
+            // ADD TEXT
+            var sub_title = document.createTextNode('AUDIO PREMIUM\nlvl: '+randomSound.ranking.toString()+'/5!')
+            para_title = document.getElementById('sub_name');
+            bold = document.createElement('strong');
+            bold.appendChild(sub_title)
+            para_title = para_title.appendChild(bold);
+
+            //CHANGE BODY
+
+            // document.getElementsByTagName("body")[0].style.background = "radial-gradient(600px at 50% 50% , #fff 20%, #eb987c 100%)";
+
+
+            // ADD CONFFETY go Buckeyes!
+            var colors = ['#bb0000', '#ffffff'];
+
+            (function frame() {
+            confetti({
+                particleCount: 2,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: colors
+            });
+            confetti({
+                particleCount: 2,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: colors
+            });
+
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+            }());
 
             document.addEventListener("click", function (e) {
                 e.preventDefault();
@@ -72,13 +164,9 @@ function getProfilesOptions() {
         }
 
         // ADD GOOD QUALITY CONTENT EFFECTS
-
-
-        
         
         // Here we need to include some login to print more than one audio tag if the audio have "pair". 
         // Ie, if we retrieve the audio number 2 from a miniblock of audio we should get the first one and print them in ascent order.
-        
         
         clean_name = randomSound.name.replace(/[0-9]/g, '').replace(/_/g, ' ');
         let array_name = array_sounds.map(obj => obj.name.replace(/_/g, ' '));
@@ -91,13 +179,13 @@ function getProfilesOptions() {
                 audios_names.push(audio_name)
                 
             });
-            var title = document.createTextNode(capitalize_Words(audios_names[0].replace(/_/g,' ')))
+            var title = document.createTextNode((audios_names[0].replace(/_/g,' ')))
             para_title = document.getElementById('name');
             para_title = para_title.appendChild(title)
 
             var ii
             for (ii = 1; ii < audios_names.length; ii++) {
-                var title = ' & '+capitalize_Words(audios_names[ii].replace(/_/g,' '))
+                var title = ' & '+(audios_names[ii].replace(/_/g,' '))
                 para_title = document.getElementById('name');
 
                 para_title.textContent += title;
@@ -109,47 +197,30 @@ function getProfilesOptions() {
                 promises_audio.push(soundRef.getDownloadURL())
                 //Then we search the audio in the storage by name, ie, each name musct be unique.
 
-                // console.log(uploadImage)
-                // get_downl(audio_name).then((audioURL) => console.log(audioURL))
-                
-
-
-                // return new Promise((resolve, reject) => {
-                //     const promises = soundRef.getDownloadURL()
-                //     console.log(promises)
-                //     = Promise.all(promises)
-                // })
-                
-                // audios_url.push(url)
-                // .then(function (url){
-                //     var sound      = document.createElement('audio');
-                //     sound.id       = 'audio-player';
-                //     sound.controls = 'controls';
-                //     sound.src      = url;
-                //     sound.type     = 'audio/ogg';
-                //     // document.getElementById('audio_container').appendChild(sound);
-                
-                
             })
             Promise.all(promises_audio).then(values => {
-                
                 values.forEach(function (value, i){
+                    var div_gap = document.createElement('div');
+                    div_gap.className = "gap-example";
+                    var source = document.createElement('source');
                     var sound      = document.createElement('audio');
-                    sound.id       = 'audio-player';
-                    sound.controls = 'controls';
-                    sound.src      = value;
-                    sound.style    = "width:35em";
-                    sound.type     = 'audio/ogg';
-                    sound.preload  = 'none';
-                    document.getElementById('audio_container').appendChild(sound);
+                    source.type= 'audio/ogg';
+                    source.src= value;
+                    sound.appendChild(source)
+                    div_gap.appendChild(sound);
+                    document.getElementById('audio_container').appendChild(div_gap);
+                });
+                GreenAudioPlayer.init({
+                    selector: '.gap-example', // inits Green Audio Player on each audio container that has class "player"
+                    stopOthersOnPlay: true
                 });
             });
-
+            
         }
         else {
             audio_name = randomSound.name.replace(/_/g,' ')
             var soundRef = firebase.storage().ref("sounds/"+randomSound.name+'.mp3') //Then we search the audio in the storage by name, ie, each name musct be unique.
-            var title = document.createTextNode(capitalize_Words(randomSound.name.replace(/_/g,' ')))
+            var title = document.createTextNode((randomSound.name.replace(/_/g,' ')))
             para_title = document.getElementById('name');
             para_title.appendChild(title)
             audio_container_div = document.createElement('div')
@@ -157,16 +228,30 @@ function getProfilesOptions() {
             audio_container_div.appendChild(para_title)
             soundRef.getDownloadURL()
             .then(function (url){
-                sound.id       = 'audio-player';
-                sound.controls = 'controls';
-                sound.src      = url;
-                sound.style    = "width:35em";
-                sound.type     = 'audio/mpeg';
-                sound.preload  = 'none';
-                document.getElementById('audio_container').appendChild(sound);
+                // sound.id       = 'audio-player';
+                // sound.controls = 'controls';
+                // sound.src      = url;
+                // sound.style    = "width:35em";
+                // sound.type     = 'audio/mpeg';
+                // sound.preload  = 'none';
+                // document.getElementById('audio_container').appendChild(sound);
+                var div_gap = document.createElement('div');
+                div_gap.className = "gap-example";
+                var source = document.createElement('source');
+                var sound      = document.createElement('audio');
+                source.type= 'audio/ogg';
+                source.src= url;
+                sound.appendChild(source)
+                div_gap.appendChild(sound);
+                document.getElementById('audio_container').appendChild(div_gap);
+
+                GreenAudioPlayer.init({
+                    selector: '.gap-example', // inits Green Audio Player on each audio container that has class "player"
+                    stopOthersOnPlay: true
+                });
             }) 
-            
             document.getElementById('audio_container').appendChild(audio_container_div);
+
         }
                
     })
