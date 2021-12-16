@@ -108,7 +108,7 @@ function read_and_print_list() {
 
             var s = document.createElement("input"); //input element, Submit button
             s.setAttribute('type',"submit");
-            s.setAttribute('value',"Registrat / Inicia sessió");
+            s.setAttribute('value',"Registra't / Inicia sessió");
             s.setAttribute('class','example_c')
             
             // f.appendChild(label)
