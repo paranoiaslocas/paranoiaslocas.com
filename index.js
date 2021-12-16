@@ -12,47 +12,135 @@ var firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
+// firebase.auth();
 
 // ------------------------------------------------------------------------------------------------------
 
+function checkForm(){
+    var email = document.getElementById("email");
+    var password = document.getElementById("pass");
+
+    firebase.auth().signInWithEmailAndPassword(email.value, password.value)
+    .then((userCredential) => {
+        
+        const user = userCredential.user;
+        window.location.reload();
+
+     })
+    .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        document.getElementById('errorText').innerHTML = error.message
+        if (error.code == 'auth/user-not-found'){
+            firebase.auth().createUserWithEmailAndPassword(email.value, password.value)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                window.location.reload();
+
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                document.getElementById('errorText').innerHTML = error.message
+            });
+        }
+    });
+    
+}
+
+function signOut(){
+    firebase.auth().signOut().then(function() {
+        console.log('Signed Out');
+        window.location.reload()
+      }, function(error) {
+        console.error('Sign Out Error', error);
+      });
+}
 
 function read_and_print_list() {
     // Create a reference under which you want to list
     var storageRef = firebase.storage().ref('sounds');
     // Now we get the references of these images
     var signout_button = document.createElement("a");
-    signout_button.innerHTML = '<b>Tancar sessió</b>';
+    
+
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            document.getElementById('username').innerHTML = 'Hola '+user.email;
+            signout_button.innerHTML = '<b> tancar sessió</b>';
+            signout_button.setAttribute('class', 'w3-bar-item w3-button w3-red w3-border w3-center w3-hover-pale-red')
+            signout_button.setAttribute('onclick',"signOut()");
+            signout_button.setAttribute('id',"signout");
+
+
+        } else {
+            
+            // var label = document.createElement("H4");
+            // var t = document.createTextNode("Registrat o inicia sessió per tenir un seguiment dels àudios que has escoltat.");
+            // label.appendChild(t);
+
+            var label2 = document.createElement("strong");
+            var t2 = document.createTextNode("No s'envia correu de confirmació. Assegura't que cada vegada poses el mateix email i contrasenya, si no perdràs el seguiment.");
+            label2.appendChild(t2);
+
+            var f = document.createElement("form");
+            f.setAttribute('name',"myform");
+            f.setAttribute('action',"javascript:checkForm()");
+            f.setAttribute('id', "inputForm")
+
+            var email = document.createElement("input"); 
+            email.setAttribute('type',"email");
+            email.setAttribute('name',"email");
+            email.setAttribute('id',"email");
+            email.setAttribute('placeholder',"Email");
+
+            var pass = document.createElement("input"); 
+            pass.setAttribute('type',"password");
+            pass.setAttribute('name',"pass");
+            pass.setAttribute('id',"pass");
+            pass.setAttribute('placeholder',"Contrasenya");
+
+            var errorPlace = document.createElement("strong"); 
+            var errorText = document.createTextNode("");
+            errorPlace.setAttribute('id',"errorText");
+            errorPlace.style.color = 'rgb(166, 2, 26)';
+            errorPlace.appendChild(errorText);
+
+            var s = document.createElement("input"); //input element, Submit button
+            s.setAttribute('type',"submit");
+            s.setAttribute('value',"Registrat / Inicia sessió");
+            s.setAttribute('class','example_c')
+            
+            // f.appendChild(label)
+            f.appendChild(label2)
+            f.appendChild(email);
+            f.appendChild(pass);
+            f.appendChild(errorPlace)
+            f.appendChild(s);
+
+            //and some more input elements here
+            //and dont forget to add a submit button
+
+            var iDiv = document.createElement('div');
+            iDiv.id = 'form_div';
+            iDiv.className = 'form_div';
+            iDiv.style = 'position:relative'
+            document.getElementById("sidenav").appendChild(iDiv);
+
+            iDiv.appendChild(f);
+            
+        }
+    })
     document.getElementById("sidenav").appendChild(signout_button);
 
-    signout_button.classList.add("w3-bar-item");
-    signout_button.classList.add("w3-button");
-    signout_button.classList.add("w3-red");
-    signout_button.classList.add("w3-border");
-    signout_button.classList.add("w3-center");
-    signout_button.classList.add("w3-hover-pale-red");
+    // var list_ = document.createElement("a");
+    // document.getElementById("sidenav").appendChild(list_);
 
-
-    for (let i = 0; i < 3; i++) {
-        var space_ = document.createElement("a");
-
-        document.getElementById("sidenav").appendChild(space_);
-    
-        space_.classList.add("w3-bar-item");
-        space_.classList.add("w3-button");
-        space_.classList.add("w3-white");
-        space_.classList.add("w3-hover-white");
-    
-    }
-
-    var list_ = document.createElement("a");
-    list_.innerHTML = '<b>Llista - audios</b>';
-    document.getElementById("sidenav").appendChild(list_);
-
-    list_.classList.add("w3-bar-item");
-    list_.classList.add("w3-button");
-    list_.classList.add("w3-white");
-    list_.classList.add("w3-hover-white");
-    list_.classList.add("w3-center");
+    // list_.classList.add("w3-bar-item");
+    // list_.classList.add("w3-button");
+    // list_.classList.add("w3-white");
+    // list_.classList.add("w3-hover-white");
+    // list_.classList.add("w3-center");
 
     storageRef.listAll().then(function(result) {
         result.items.forEach(function(imageRef) {
@@ -68,6 +156,7 @@ function read_and_print_list() {
             node.classList.add("w3-border");
             document.getElementById("sidenav").appendChild(node);
         });
+        
 
     }).catch(function(error) {
         // Handle any errors
@@ -235,25 +324,22 @@ function getProfilesOptions() {
                 sound.type     = 'audio/mpeg';
                 sound.preload  = 'none';
                 document.getElementById('audio_container').appendChild(sound);
-            //     var div_gap = document.createElement('div');
-            //     div_gap.className = "gap-example";
-            //     var source = document.createElement('source');
-            //     var sound      = document.createElement('audio');
-            //     source.type= 'audio/ogg';
-            //     source.src= url;
-            //     sound.appendChild(source)
-            //     div_gap.appendChild(sound);
-            //     document.getElementById('audio_container').appendChild(div_gap);
+                var div_gap = document.createElement('div');
+                div_gap.className = "gap-example";
+                var source = document.createElement('source');
+                var sound      = document.createElement('audio');
+                source.type= 'audio/ogg';
+                source.src= url;
+                sound.appendChild(source)
+                div_gap.appendChild(sound);
+                document.getElementById('audio_container').appendChild(div_gap);
 
-            //     GreenAudioPlayer.init({
-            //         selector: '.gap-example', // inits Green Audio Player on each audio container that has class "player"
-            //         stopOthersOnPlay: true
-            //     });
-            // }) 
-            // document.getElementById('audio_container').appendChild(audio_container_div);
+                GreenAudioPlayer.init({
+                    selector: '.gap-example', // inits Green Audio Player on each audio container that has class "player"
+                    stopOthersOnPlay: true
+                });
             }) 
             document.getElementById('audio_container').appendChild(audio_container_div);
-
 
         }
                
