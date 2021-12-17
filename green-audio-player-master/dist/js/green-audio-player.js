@@ -34,7 +34,8 @@ var GreenAudioPlayer = /*#__PURE__*/function () {
     var audioElement = this.audioPlayer.innerHTML;
     this.audioPlayer.classList.add('green-audio-player');
     this.audioPlayer.innerHTML = GreenAudioPlayer.getTemplate() + audioElement;
-    this.isDevice = /ipad|iphone|ipod|android/i.test(window.navigator.userAgent.toLowerCase()) && !window.MSStream;
+    var uaDataIsMobile = window.navigator.userAgentData && window.navigator.userAgentData.mobile;
+    this.isDevice = typeof uaDataIsMobile === 'boolean' ? uaDataIsMobile : (/ipad|iphone|ipod|android/i.test(window.navigator.userAgent.toLowerCase()) || window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1) && !window.MSStream;
     this.playPauseBtn = this.audioPlayer.querySelector('.play-pause-btn');
     this.loading = this.audioPlayer.querySelector('.loading');
     this.sliders = this.audioPlayer.querySelectorAll('.slider');
@@ -207,6 +208,8 @@ var GreenAudioPlayer = /*#__PURE__*/function () {
       }
 
       this.downloadLink.addEventListener('click', this.downloadAudio.bind(self));
+      this.downloadLink.addEventListener('mouseover', this.downloadAudio.bind(self));
+      this.downloadLink.addEventListener('contextmenu', this.downloadAudio.bind(self));
     }
   }, {
     key: "overcomeIosLimitations",
@@ -558,8 +561,9 @@ var GreenAudioPlayer = /*#__PURE__*/function () {
   }], [{
     key: "init",
     value: function init(options) {
+      /* use prototype constructor compatible with IE foreach */
       var players = document.querySelectorAll(options.selector);
-      players.forEach(function (player) {
+      Array.prototype.slice.call(players).forEach(function (player) {
         /* eslint-disable no-new */
         new GreenAudioPlayer(player, options);
       });
@@ -597,6 +601,13 @@ var GreenAudioPlayer = /*#__PURE__*/function () {
 
       for (var i = 0; i < players.length; i++) {
         GreenAudioPlayer.pausePlayer(players[i]);
+        var holderDiv = players[i].parentElement.querySelector('.holder');
+        var playPauseBtn = holderDiv.querySelector('.play-pause-btn');
+        playPauseBtn.setAttribute('aria-label', 'Play');
+
+        if (playPauseBtn.attributes.title) {
+          playPauseBtn.setAttribute('title', 'Play');
+        }
       }
     }
   }]);
