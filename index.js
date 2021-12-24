@@ -282,26 +282,24 @@ function getProfilesOptions() {
             promises_audio = []
             audios_names.forEach(function (value, i){
                 audio_name = clean_name.replace(/ /g, '_')+(i+1)
-                var soundRef = firebase.storage().ref("sounds/"+audio_name+'.ogg')
+                var soundRef = firebase.storage().ref("sounds/"+audio_name+'.mp3')
                 console.log(soundRef)
                 promises_audio.push(soundRef.getDownloadURL())
                 //Then we search the audio in the storage by name, ie, each name musct be unique.
 
             })
-            Promise.all(promises_audio).then(values => {
-                values.forEach(function (value, i){
-                    console.log(value)
-                    var source = document.createElement('source');
-                    var sound      = document.createElement('audio');
-                    source.type = 'audio/ogg';
-                    source.src = value;
-                    sound.id       = 'audio-player';
-                    sound.controls = 'controls';
-                    // sound.style    = "width:35em";
-                    sound.type     = 'audio/ogg';
-                    sound.preload  = 'auto';
-                    sound.appendChild(source)                    
-                    document.getElementById('audio_container').appendChild(sound);
+            // Promise.all(promises_audio).then(values => {
+            //     values.forEach(function (value, i){
+            //         var source = document.createElement('source');
+            //         var sound      = document.createElement('audio');
+            //         source.type = 'audio/ogg';
+            //         source.src = value;
+            //         sound.id       = 'audio-player';
+            //         sound.controls = 'controls';
+            //         sound.type     = 'audio/ogg';
+            //         sound.preload  = 'auto';
+            //         sound.appendChild(source)                    
+            //         document.getElementById('audio_container').appendChild(sound);
 
                     // document.getElementById('audio_container').appendChild(div_gap);
                     // div_gap.className = "gap-example";
@@ -311,11 +309,47 @@ function getProfilesOptions() {
                     // source.src= value;
                     // sound.appendChild(source)
                     // div_gap.appendChild(sound);
-                    // document.getElementById('audio_container').appendChild(div_gap);
-                })
+            //         // document.getElementById('audio_container').appendChild(div_gap);
+            //     })
+            // });
+            Promise.all(promises_audio).then(values => {
+                values.forEach(function (value, i){
+                    var div_gap = document.createElement('div');
+                    div_gap.className = "gap-example";
+                    var source = document.createElement('source');
+                    var sound      = document.createElement('audio');
+                    source.type= 'audio/mpeg';
+                    source.src= value;
+                    sound.appendChild(source)
+                    div_gap.appendChild(sound);
+                    document.getElementById('audio_container').appendChild(div_gap);
+                });
+                GreenAudioPlayer.init({
+                    selector: '.gap-example', // inits Green Audio Player on each audio container that has class "player"
+                    stopOthersOnPlay: true
+                });
             });
+
         }
         else {
+            // audio_name = randomSound.name.replace(/_/g,' ')
+            // var soundRef = firebase.storage().ref("sounds/"+randomSound.name+'.mp3') //Then we search the audio in the storage by name, ie, each name musct be unique.
+            // var title = document.createTextNode((randomSound.name.replace(/_/g,' ')))
+            // para_title = document.getElementById('name');
+            // para_title.appendChild(title)
+            // audio_container_div = document.createElement('div')
+            // audio_container_div.setAttribute('id',audio_name)
+            // audio_container_div.appendChild(para_title)
+            // var source = document.createElement('source');
+            // var sound      = document.createElement('audio');
+            // source.type = 'audio/mpeg';
+            // source.src = soundRef;
+            // sound.id       = 'audio-player';
+            // sound.controls = 'controls';
+            // sound.type     = 'audio/ogg';
+            // sound.preload  = 'auto';
+            // sound.appendChild(source)                    
+            // audio_container_div.appendChild(sound);
             audio_name = randomSound.name.replace(/_/g,' ')
             var soundRef = firebase.storage().ref("sounds/"+randomSound.name+'.mp3') //Then we search the audio in the storage by name, ie, each name musct be unique.
             var title = document.createTextNode((randomSound.name.replace(/_/g,' ')))
@@ -349,6 +383,7 @@ function getProfilesOptions() {
                 });
             }) 
             document.getElementById('audio_container').appendChild(audio_container_div);
+
 
         }
                
