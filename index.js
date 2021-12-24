@@ -302,6 +302,7 @@ function getProfilesOptions() {
                 GreenAudioPlayer.init({
                     selector: '.gap-example', // inits Green Audio Player on each audio container that has class "player"
                     stopOthersOnPlay: true
+                    
                 });
             });
             
