@@ -283,13 +283,14 @@ function getProfilesOptions() {
             audios_names.forEach(function (value, i){
                 audio_name = clean_name.replace(/ /g, '_')+(i+1)
                 var soundRef = firebase.storage().ref("sounds/"+audio_name+'.ogg')
+                console.log(soundRef)
                 promises_audio.push(soundRef.getDownloadURL())
                 //Then we search the audio in the storage by name, ie, each name musct be unique.
 
             })
             Promise.all(promises_audio).then(values => {
                 values.forEach(function (value, i){
-                    
+                    console.log(value)
                     var source = document.createElement('source');
                     var sound      = document.createElement('audio');
                     source.type = 'audio/ogg';
@@ -300,7 +301,6 @@ function getProfilesOptions() {
                     sound.type     = 'audio/ogg';
                     sound.preload  = 'auto';
                     sound.appendChild(source)                    
-                    console.log(document.getElementById('audio_container'))
                     document.getElementById('audio_container').appendChild(sound);
 
                     // document.getElementById('audio_container').appendChild(div_gap);
