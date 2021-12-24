@@ -289,23 +289,31 @@ function getProfilesOptions() {
             })
             Promise.all(promises_audio).then(values => {
                 values.forEach(function (value, i){
-                    var div_gap = document.createElement('div');
-                    div_gap.className = "gap-example";
+                    
                     var source = document.createElement('source');
                     var sound      = document.createElement('audio');
-                    source.type= 'audio/ogg';
-                    source.src= value;
-                    sound.appendChild(source)
-                    div_gap.appendChild(sound);
-                    document.getElementById('audio_container').appendChild(div_gap);
-                });
-                GreenAudioPlayer.init({
-                    selector: '.gap-example', // inits Green Audio Player on each audio container that has class "player"
-                    stopOthersOnPlay: true
-                    
-                });
+                    source.type = 'audio/ogg';
+                    source.src = value;
+                    sound.id       = 'audio-player';
+                    sound.controls = 'controls';
+                    // sound.style    = "width:35em";
+                    sound.type     = 'audio/ogg';
+                    sound.preload  = 'none';
+                    sound.appendChild(source)                    
+                    console.log(document.getElementById('audio_container'))
+                    document.getElementById('audio_container').appendChild(sound);
+
+                    // document.getElementById('audio_container').appendChild(div_gap);
+                    // div_gap.className = "gap-example";
+                    // var source = document.createElement('source');
+                    // var sound      = document.createElement('audio');
+                    // source.type= 'audio/ogg';
+                    // source.src= value;
+                    // sound.appendChild(source)
+                    // div_gap.appendChild(sound);
+                    // document.getElementById('audio_container').appendChild(div_gap);
+                })
             });
-            
         }
         else {
             audio_name = randomSound.name.replace(/_/g,' ')
