@@ -298,7 +298,7 @@ function getProfilesOptions() {
                     sound.controls = 'controls';
                     // sound.style    = "width:35em";
                     sound.type     = 'audio/ogg';
-                    sound.preload  = 'none';
+                    sound.preload  = 'auto';
                     sound.appendChild(source)                    
                     console.log(document.getElementById('audio_container'))
                     document.getElementById('audio_container').appendChild(sound);
