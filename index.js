@@ -178,7 +178,6 @@ async function get_downl(audio_name){
 
 
 function update_sound_list_user(user) {
-    console.log('hola')
     firebase.firestore().collection('users').doc(user.uid).get().then((doc) => {
         if (doc.exists) {
             var array_listened_audios = doc.data().list_listened_audios;
@@ -297,7 +296,6 @@ function getProfilesOptions() {
             audios_names.forEach(function (value, i){
                 audio_name = clean_name.replace(/ /g, '_')+(i+1)
                 var soundRef = firebase.storage().ref("sounds/"+audio_name+'.mp3')
-                console.log(soundRef)
                 promises_audio.push(soundRef.getDownloadURL())
                 //Then we search the audio in the storage by name, ie, each name musct be unique.
                 
@@ -307,8 +305,10 @@ function getProfilesOptions() {
                 firebase.firestore().collection('users').doc(user.uid).get().then((doc) => {
                     if (doc.exists) {
                         var array_listened_audios = doc.data().list_listened_audios;
-                        if (!array_listened_audios.includes(audios_names[0])){ //IF NOT INCLUDED IN LISTENED SINO POSA ELS DOS!
+                        audio_name_under_from_array = audios_names[0].replace(/ /g,'_')
+                        if (!array_listened_audios.includes(audio_name_under_from_array[0])){ //IF NOT INCLUDED IN LISTENED SINO POSA ELS DOS!
                             audios_names.forEach(function (value, i) {
+                                value = value.replace(/ /g,'_')
                                 array_listened_audios.push(value);
                                 firebase.firestore().collection('users').doc(user.uid).set({
                                     list_listened_audios: array_listened_audios
@@ -374,8 +374,9 @@ function getProfilesOptions() {
                 firebase.firestore().collection('users').doc(user.uid).get().then((doc) => {
                     if (doc.exists) {
                         var array_listened_audios = doc.data().list_listened_audios;
-                        if (!array_listened_audios.includes(audio_name)){ //IF NOT INCLUDED IN LISTENED SINO POSA ELS DOS!
-                            array_listened_audios.push(audio_name);
+                        audio_name_under = audio_name.replace(/ /g,'_')
+                        if (!array_listened_audios.includes(audio_name_under)){ //IF NOT INCLUDED IN LISTENED SINO POSA ELS DOS!
+                            array_listened_audios.push(audio_name_under);
                             firebase.firestore().collection('users').doc(user.uid).set({
                                 list_listened_audios: array_listened_audios
                             }).then(function(){
