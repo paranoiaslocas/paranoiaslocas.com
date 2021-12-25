@@ -22,27 +22,37 @@ function checkForm(){
 
     firebase.auth().signInWithEmailAndPassword(email.value, password.value)
     .then((userCredential) => {
-        
-        const user = userCredential.user;
+        document.getElementById("sidenav").style.display = "none";
         window.location.reload();
 
      })
     .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        document.getElementById('errorText').innerHTML = error.message
+        console.log(error)
+
         if (error.code == 'auth/user-not-found'){
             firebase.auth().createUserWithEmailAndPassword(email.value, password.value)
             .then((userCredential) => {
                 const user = userCredential.user;
-                window.location.reload();
+                firebase.firestore().collection('users').doc(user.uid).set({
+                    list_listened_audios: []
+                }).then(function(){
+                    document.getElementById("sidenav").style.display = "none";
+                    window.location.reload();
+                })
+                
 
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
+                console.log(error)
                 document.getElementById('errorText').innerHTML = error.message
             });
+        } else {
+            document.getElementById('errorText').innerHTML = error.message
+
         }
     });
     
@@ -50,6 +60,7 @@ function checkForm(){
 
 function signOut(){
     firebase.auth().signOut().then(function() {
+        document.getElementById("sidenav").style.display = "none";
         console.log('Signed Out');
         window.location.reload()
       }, function(error) {
@@ -59,7 +70,6 @@ function signOut(){
 
 function read_and_print_list() {
     // Create a reference under which you want to list
-    var storageRef = firebase.storage().ref('sounds');
     // Now we get the references of these images
     var signout_button = document.createElement("a");
     
@@ -71,13 +81,9 @@ function read_and_print_list() {
             signout_button.setAttribute('class', 'w3-bar-item w3-button w3-red w3-border w3-center w3-hover-pale-red')
             signout_button.setAttribute('onclick',"signOut()");
             signout_button.setAttribute('id',"signout");
-
-
+            
         } else {
             
-            // var label = document.createElement("H4");
-            // var t = document.createTextNode("Registrat o inicia sessió per tenir un seguiment dels àudios que has escoltat.");
-            // label.appendChild(t);
 
             var label2 = document.createElement("strong");
             var t2 = document.createTextNode("No s'envia correu de confirmació. Assegura't que cada vegada poses el mateix email i contrasenya, si no perdràs el seguiment.");
@@ -133,36 +139,7 @@ function read_and_print_list() {
     })
     document.getElementById("sidenav").appendChild(signout_button);
 
-    // var list_ = document.createElement("a");
-    // document.getElementById("sidenav").appendChild(list_);
-
-    // list_.classList.add("w3-bar-item");
-    // list_.classList.add("w3-button");
-    // list_.classList.add("w3-white");
-    // list_.classList.add("w3-hover-white");
-    // list_.classList.add("w3-center");
-
-    storageRef.listAll().then(function(result) {
-        result.items.forEach(function(imageRef) {
-            // And finally display them
-            var node = document.createElement("a");
-            var filename = (imageRef._delegate._location.path_).split('sounds/')[1];
-            node.innerHTML = filename;
-            // var textnode = document.createTextNode(filename);
-            // node.appendChild(textnode);
-            node.classList.add("w3-bar-item");
-            node.classList.add("w3-button");
-            node.classList.add("w3-light-gray");
-            node.classList.add("w3-border");
-            document.getElementById("sidenav").appendChild(node);
-        });
-        
-
-    }).catch(function(error) {
-        // Handle any errors
-    });
 }
-read_and_print_list();
 
 function capitalize_Words(str)
 {
@@ -176,8 +153,7 @@ function getRandomValueFromSoundArray(array_s) {
 
 async function get_downl(audio_name){
     urlArray = []
-    var soundRef = await firebase.storage().ref("sounds/"+audio_name+'.ogg')
-    console.log(soundRef)
+    var soundRef = await firebase.storage().ref("sounds/"+audio_name+'.mp3')
     try {
         const url = await soundRef.getDownloadURL();
         urlArray.push(url);
@@ -188,6 +164,33 @@ async function get_downl(audio_name){
       console.error(err);
     }
 };
+
+
+function update_sound_list_user(user) {
+    console.log('hola')
+    firebase.firestore().collection('users').doc(user.uid).get().then((doc) => {
+        if (doc.exists) {
+            var array_listened_audios = doc.data().list_listened_audios;
+
+            firebase.firestore().collection("sounds_db").get().then(snapshot => { 
+                snapshot.docs.forEach(doc => {
+
+                    var node = document.createElement("a");
+                    node.innerHTML = doc.data().name;
+                    node.classList.add("w3-bar-item");
+                    node.classList.add("w3-button");
+                    if (array_listened_audios.includes(doc.data().name)) {
+                        node.classList.add("w3-light-green");
+                    }else {
+                        node.classList.add("w3-light-gray");
+                    }
+                    node.classList.add("w3-border");
+                    document.getElementById("sidenav").appendChild(node);
+                });
+            });
+        }
+    });
+}
 
 function getProfilesOptions() {
     var sound = document.createElement('audio');
@@ -242,13 +245,13 @@ function getProfilesOptions() {
             }
             }());
 
-            document.addEventListener("click", function (e) {
-                e.preventDefault();
-                party.sparkles(e, {
-                    count: party.variation.range(10, 40),
-	                speed: party.variation.range(50, 200),
-                });
-            });
+            // document.addEventListener("click", function (e) {
+            //     e.preventDefault();
+            //     party.sparkles(e, {
+            //         count: party.variation.range(10, 40),
+	        //         speed: party.variation.range(50, 200),
+            //     });
+            // });
 
         }
 
@@ -286,32 +289,33 @@ function getProfilesOptions() {
                 console.log(soundRef)
                 promises_audio.push(soundRef.getDownloadURL())
                 //Then we search the audio in the storage by name, ie, each name musct be unique.
-
+                
             })
-            // Promise.all(promises_audio).then(values => {
-            //     values.forEach(function (value, i){
-            //         var source = document.createElement('source');
-            //         var sound      = document.createElement('audio');
-            //         source.type = 'audio/ogg';
-            //         source.src = value;
-            //         sound.id       = 'audio-player';
-            //         sound.controls = 'controls';
-            //         sound.type     = 'audio/ogg';
-            //         sound.preload  = 'auto';
-            //         sound.appendChild(source)                    
-            //         document.getElementById('audio_container').appendChild(sound);
+            var user = firebase.auth().currentUser;
+            if (!(user == null)) {
+                firebase.firestore().collection('users').doc(user.uid).get().then((doc) => {
+                    if (doc.exists) {
+                        var array_listened_audios = doc.data().list_listened_audios;
+                        if (!array_listened_audios.includes(audios_names[0])){ //IF NOT INCLUDED IN LISTENED SINO POSA ELS DOS!
+                            audios_names.forEach(function (value, i) {
+                                array_listened_audios.push(value);
+                                firebase.firestore().collection('users').doc(user.uid).set({
+                                    list_listened_audios: array_listened_audios
+                                }).then(function(){
+                                    console.log('done')
+                                })
+                            })
+                        }
+                        update_sound_list_user(user)
+                    } else {
+                        // doc.data() will be undefined in this case
+                        console.log("No such document!");
+                    }
+                    }).catch((error) => {
+                        console.log("Error getting document:", error);
+                });
+            }
 
-                    // document.getElementById('audio_container').appendChild(div_gap);
-                    // div_gap.className = "gap-example";
-                    // var source = document.createElement('source');
-                    // var sound      = document.createElement('audio');
-                    // source.type= 'audio/ogg';
-                    // source.src= value;
-                    // sound.appendChild(source)
-                    // div_gap.appendChild(sound);
-            //         // document.getElementById('audio_container').appendChild(div_gap);
-            //     })
-            // });
             Promise.all(promises_audio).then(values => {
                 values.forEach(function (value, i){
                     var div_gap = document.createElement('div');
@@ -332,60 +336,52 @@ function getProfilesOptions() {
 
         }
         else {
-            // audio_name = randomSound.name.replace(/_/g,' ')
-            // var soundRef = firebase.storage().ref("sounds/"+randomSound.name+'.mp3') //Then we search the audio in the storage by name, ie, each name musct be unique.
-            // var title = document.createTextNode((randomSound.name.replace(/_/g,' ')))
-            // para_title = document.getElementById('name');
-            // para_title.appendChild(title)
-            // audio_container_div = document.createElement('div')
-            // audio_container_div.setAttribute('id',audio_name)
-            // audio_container_div.appendChild(para_title)
-            // var source = document.createElement('source');
-            // var sound      = document.createElement('audio');
-            // source.type = 'audio/mpeg';
-            // source.src = soundRef;
-            // sound.id       = 'audio-player';
-            // sound.controls = 'controls';
-            // sound.type     = 'audio/ogg';
-            // sound.preload  = 'auto';
-            // sound.appendChild(source)                    
-            // audio_container_div.appendChild(sound);
             audio_name = randomSound.name.replace(/_/g,' ')
             var soundRef = firebase.storage().ref("sounds/"+randomSound.name+'.mp3') //Then we search the audio in the storage by name, ie, each name musct be unique.
             var title = document.createTextNode((randomSound.name.replace(/_/g,' ')))
             para_title = document.getElementById('name');
             para_title.appendChild(title)
-            audio_container_div = document.createElement('div')
-            audio_container_div.setAttribute('id',audio_name)
-            audio_container_div.appendChild(para_title)
-            soundRef.getDownloadURL()
-            .then(function (url){
-                sound.id       = 'audio-player';
-                sound.controls = 'controls';
-                sound.src      = url;
-                sound.style    = "width:35em";
-                sound.type     = 'audio/mpeg';
-                sound.preload  = 'none';
-                document.getElementById('audio_container').appendChild(sound);
+
+            soundRef.getDownloadURL().then((url_sound) => {
                 var div_gap = document.createElement('div');
                 div_gap.className = "gap-example";
                 var source = document.createElement('source');
                 var sound      = document.createElement('audio');
-                source.type= 'audio/ogg';
-                source.src= url;
+                source.type= 'audio/mpeg';
+                source.src= url_sound;
                 sound.appendChild(source)
                 div_gap.appendChild(sound);
                 document.getElementById('audio_container').appendChild(div_gap);
-
                 GreenAudioPlayer.init({
                     selector: '.gap-example', // inits Green Audio Player on each audio container that has class "player"
                     stopOthersOnPlay: true
                 });
-            }) 
-            document.getElementById('audio_container').appendChild(audio_container_div);
-
-
+            });
+            
+            var user = firebase.auth().currentUser;
+            if (!(user == null)) {
+                firebase.firestore().collection('users').doc(user.uid).get().then((doc) => {
+                    if (doc.exists) {
+                        var array_listened_audios = doc.data().list_listened_audios;
+                        if (!array_listened_audios.includes(audio_name)){ //IF NOT INCLUDED IN LISTENED SINO POSA ELS DOS!
+                            array_listened_audios.push(audio_name);
+                            firebase.firestore().collection('users').doc(user.uid).set({
+                                list_listened_audios: array_listened_audios
+                            }).then(function(){
+                                console.log('done')
+                            })
+                        }
+                        update_sound_list_user(user)
+                    } else {
+                        // doc.data() will be undefined in this case
+                        console.log("No such document!");
+                    }
+                    }).catch((error) => {
+                        console.log("Error getting document:", error);
+                });
+            }
         }
+        
                
     })
     sound.load()
@@ -393,19 +389,7 @@ function getProfilesOptions() {
     }) 
 
  }
- getProfilesOptions()
-
-
-
-// 2. fer la logica per triar basada en el ranking i si hi ha mes dun. Si nhi ha mes dun posar mes tags daudio. 
-
-// storageRef.listAll().then(function(result) { // AIXO VA FORA PERQUE ES PER LLISTA I EN COMPTES DE LLISTA A DE SER UN SOL AUDIO
-
-//     result.items.forEach(function(sound) { 
-//         sound.getDownloadURL() // AIXO ESTA BE
-//         .then((url) => 
-//         console.log(url) // AIXO ES LO Q SHA DENVIAR AL AUDIO TAG.
-//         )
-//     })
-// })
+ 
+ read_and_print_list();
+ getProfilesOptions();
 
