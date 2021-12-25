@@ -16,6 +16,17 @@ firebase.analytics();
 
 // ------------------------------------------------------------------------------------------------------
 
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+document.body.style.backgroundImage = 'radial-gradient(circle, '+getRandomColor()+' 0%, '+getRandomColor()+' 18%, '+getRandomColor()+' 36%, '+getRandomColor()+' 52%, '+getRandomColor()+' 67%, '+getRandomColor()+' 100%)';
+
 function checkForm(){
     var email = document.getElementById("email");
     var password = document.getElementById("pass");
